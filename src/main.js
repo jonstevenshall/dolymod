@@ -1124,6 +1124,9 @@ window.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
     e.preventDefault();
     undo();
+  } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p') {
+    e.preventDefault();
+    printModel();
   } else if (e.key === '+' || e.key === '=') {
     zoomBy(0.8);
   } else if (e.key === '-') {
@@ -1341,7 +1344,10 @@ for (const kind of KINDS) {
       fill.id = 'fill';
       fill.type = 'button';
       fill.title = 'Put a hydrogen in every free hole';
-      fill.textContent = 'Fill with H';
+      // The icon is a hydrogen ball on the end of a link.
+      fill.innerHTML =
+        '<span class="fill-icon" aria-hidden="true"><span class="stick"></span>' +
+        `<span class="ball" style="--c:${ELEMENTS.H.color}"></span></span>Fill with H`;
       top.append(heading, fill);
       section.append(top, chips);
     } else {
@@ -1441,6 +1447,76 @@ $('open-file').addEventListener('change', e => {
   if (e.target.files[0]) openFile(e.target.files[0]);
   e.target.value = '';
 });
+
+// ---- Print ------------------------------------------------------------------
+// The printed page is a still picture of the model, as it is turned now, with
+// its name and formula underneath. The picture is drawn sharper than the
+// screen and trimmed to the model.
+function snapshot() {
+  clearHover();
+  const shot = $('snapshot');
+  const { clientWidth: w, clientHeight: h } = canvas;
+  const ratio = renderer.getPixelRatio();
+  renderer.setPixelRatio(Math.min(4, 4000 / Math.max(w, h, 1)));
+  renderer.render(scene, camera);
+  const W = canvas.width;
+  const H = canvas.height;
+  const full = document.createElement('canvas');
+  full.width = W;
+  full.height = H;
+  const ctx = full.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(canvas, 0, 0);
+  renderer.setPixelRatio(ratio);
+  renderer.render(scene, camera);
+
+  // The background is see-through, so the model is wherever a pixel isn't.
+  const alpha = ctx.getImageData(0, 0, W, H).data;
+  let x0 = W, y0 = H, x1 = -1, y1 = -1;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0, i = y * W * 4 + 3; x < W; x++, i += 4) {
+      if (alpha[i] > 8) {
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        y1 = y;
+      }
+    }
+  }
+  if (x1 < 0) {
+    shot.removeAttribute('src');
+    return Promise.resolve();
+  }
+  const pad = Math.round(0.04 * Math.max(x1 - x0, y1 - y0)) + 4;
+  x0 = Math.max(0, x0 - pad);
+  y0 = Math.max(0, y0 - pad);
+  x1 = Math.min(W - 1, x1 + pad);
+  y1 = Math.min(H - 1, y1 + pad);
+  const out = document.createElement('canvas');
+  out.width = x1 - x0 + 1;
+  out.height = y1 - y0 + 1;
+  out.getContext('2d').drawImage(full, x0, y0, out.width, out.height, 0, 0, out.width, out.height);
+  shot.alt = $('name').hidden ? 'The model' : $('name').textContent;
+  shot.src = out.toDataURL('image/png');
+  return shot.decode().catch(() => {});
+}
+
+let snapshotReady = false;
+async function printModel() {
+  if (!model.atoms.length) {
+    flash('Build a model to print it');
+    return;
+  }
+  await snapshot();
+  snapshotReady = true;
+  window.print();
+}
+// Printing from the browser's menu skips the Print button, so take the
+// picture here too.
+window.addEventListener('beforeprint', () => {
+  if (!snapshotReady) snapshot();
+  snapshotReady = false;
+});
+$('print').addEventListener('click', printModel);
 
 // When the site was last deployed: the newest time any of its files changed
 // on the server. Each deploy is a fresh copy, so this needs no build step.
