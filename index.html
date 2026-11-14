@@ -71,6 +71,7 @@
       <button id="save" title="Save this model to a file">Save</button>
       <button id="open" title="Open a saved model file">Load</button>
       <input id="open-file" type="file" accept=".json,application/json" hidden>
+      <button id="print" title="Print a picture of this model with its name (Ctrl/⌘ P)">Print</button>
       <button id="undo" title="Undo (Ctrl/⌘ Z)" disabled>Undo</button>
       <button id="fit">Fit view</button>
       <button id="clear">Clear</button>
@@ -82,6 +83,7 @@
     </aside>
     <section class="stage">
       <canvas id="scene"></canvas>
+      <img id="snapshot" class="snapshot" alt="">
       <nav class="tools" aria-label="Tools">
         <button data-tool="add">Build</button>
         <button data-tool="link">Link</button>

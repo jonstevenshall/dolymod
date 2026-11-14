@@ -51,6 +51,8 @@ work, because browsers block ES modules on `file://`.)
   refresh. **Save** writes it to a `.json` file named after the molecule: in Chrome, Edge
   and on Chromebooks you choose where; other browsers put it in Downloads. **Load** opens
   a saved file.
+- **Print** prints a picture of the model, turned the way it is on screen, with its
+  name and formula underneath. Ctrl/⌘ P and the browser's own Print do the same.
 - **Naming**: once every hole is filled, the panel names the molecule. The model is
   written as a SMILES string and looked up in [PubChem](https://pubchem.ncbi.nlm.nih.gov),
   so this needs an internet connection. Cis/trans and mirror-image forms aren't told
