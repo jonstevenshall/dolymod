@@ -98,7 +98,7 @@ straight away; three.js in `vendor/` is cached for a week. On Coolify, use the
 
 ## Code
 
-- `index.html`, `style.css`: the page. `teachers.html`: notes for teachers (curriculum
+- `index.html`, `style.css`: the page. `teachers.html`: notes for educators (curriculum
   links, activities, privacy).
 - `src/kit.js`: element colours and sizes, and the hole directions for each atom.
 - `src/main.js`: the model, the placement rules, rendering and interaction.
