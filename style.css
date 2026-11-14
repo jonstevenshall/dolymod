@@ -217,7 +217,7 @@ main { flex: 1; display: flex; min-height: 0; }
   min-width: 0;
   background: radial-gradient(ellipse at 50% 40%, var(--bg), var(--bg-deep));
 }
-.snapshot { display: none; }
+.snapshot, .print-credit { display: none; }
 #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 
 .hint, .readout, .help, .toast { position: absolute; margin: 0; pointer-events: none; }
@@ -336,16 +336,15 @@ main { flex: 1; display: flex; min-height: 0; }
     --accent: #2f5fd0;
   }
   html, body { height: auto; overflow: visible; background: #fff; color: var(--ink); }
-  .actions, .tag-link, .updated, .palette, .tools, .hint, .toast, .zoom, .help, #scene { display: none !important; }
-  .bar, .foot { padding: 0; background: none; border: 0; }
-  .tag { display: inline; }
+  .bar, .foot, .palette, .tools, .hint, .toast, .zoom, .help, #scene { display: none !important; }
   main { display: block; }
   .stage { background: none; box-shadow: none !important; }
-  .snapshot[src] { display: block; max-width: 100%; max-height: min(165mm, 60vh); margin: 10mm auto; }
+  .snapshot[src] { display: block; max-width: 100%; max-height: min(165mm, 60vh); margin: 0 auto 10mm; }
   .readout { position: static; max-width: none; padding: 0; background: none; border: 0; }
   .name { font-size: 24px; }
   .subname { font-size: 13px; }
   .formula { font-size: 22px; }
   .details { font-size: 13px; }
-  .foot { margin-top: 10mm; }
+  /* The only credit on the page: the site's name in small print at the foot. */
+  .print-credit { display: block; position: fixed; bottom: 0; left: 0; font-size: 9px; color: var(--muted); }
 }
