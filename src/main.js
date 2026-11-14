@@ -1527,6 +1527,7 @@ async function showUpdated() {
   const latest = Math.max(...times.filter(Number.isFinite));
   if (Number.isFinite(latest)) {
     $('updated').textContent = `Updated ${new Date(latest).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+    $('updated').parentElement.hidden = false;
   }
 }
 showUpdated();
