@@ -1344,10 +1344,19 @@ for (const kind of KINDS) {
       fill.id = 'fill';
       fill.type = 'button';
       fill.title = 'Put a hydrogen in every free hole';
-      // The icon is a hydrogen ball on the end of a link.
+      // The icon is two shaded hydrogen balls on a link, one behind the other.
+      const h = ELEMENTS.H.color;
       fill.innerHTML =
-        '<span class="fill-icon" aria-hidden="true"><span class="stick"></span>' +
-        `<span class="ball" style="--c:${ELEMENTS.H.color}"></span></span>Fill with H`;
+        '<svg class="fill-icon" viewBox="0 0 30 22" aria-hidden="true">' +
+        '<defs><radialGradient id="h-shade" cx="35%" cy="30%" r="75%">' +
+        `<stop offset="0" stop-color="#fff"/><stop offset="0.5" stop-color="${h}"/><stop offset="1" stop-color="#a9ada6"/>` +
+        '</radialGradient></defs>' +
+        '<line x1="7" y1="15" x2="23" y2="7" stroke="#9c9c9c" stroke-width="3" stroke-linecap="round"/>' +
+        '<circle cx="23" cy="7" r="5.5" fill="url(#h-shade)" stroke="rgba(0,0,0,.3)" stroke-width=".6"/>' +
+        '<text x="23" y="7.4" font-size="6.5">H</text>' +
+        '<circle cx="7" cy="15" r="6.3" fill="url(#h-shade)" stroke="rgba(0,0,0,.3)" stroke-width=".6"/>' +
+        '<text x="7" y="15.4" font-size="7.5">H</text>' +
+        '</svg>Fill with H';
       top.append(heading, fill);
       section.append(top, chips);
     } else {
