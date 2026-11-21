@@ -1539,7 +1539,7 @@ $('print').addEventListener('click', printModel);
 
 // ---- Thank-you popup ----------------------------------------------------------
 // Every fifth molecule PubChem names for someone in this browser brings up a
-// popup asking for support, at most once a visit. "Never show this popup again"
+// popup asking for support, at most once a visit. "Don't show this popup again"
 // is saved the moment it is ticked and checked again just before showing, so
 // once ticked the popup can't come back in this browser. If the browser's
 // storage is switched off, both still hold for the rest of the visit.
