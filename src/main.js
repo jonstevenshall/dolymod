@@ -367,6 +367,7 @@ async function openFile(file) {
   }
   if (!opened) return flash("That file isn't a saved model");
   change(() => { model = opened; });
+  notBuilt = structure();
   fitView();
 }
 
@@ -375,6 +376,10 @@ async function openFile(file) {
 // An example PubChem can't name (a cut-off piece of crystal, say) keeps its
 // label for as long as its atoms and links are as loaded.
 let labelled = null;
+// The structure of a model that was loaded rather than built (an example, a
+// file, or the model brought back on refresh): naming it doesn't count
+// towards the thank-you popup.
+let notBuilt = null;
 const structure = () => model.atoms.map(a => a.id + a.kind).join() + '|' + model.bonds.map(b => `${b.a}-${b.b}`).join();
 
 function loadExample(example) {
@@ -385,6 +390,7 @@ function loadExample(example) {
     if (example.tree || example.fill) fillHoles();
     labelled = example.label ? { label: example.label, structure: structure() } : null;
   });
+  notBuilt = structure();
   // Show it face on, or from the example's own angle.
   camera.position.copy(controls.target).add(example.view ? new THREE.Vector3(...example.view).normalize() : Z);
   fitView();
@@ -1121,6 +1127,7 @@ canvas.addEventListener('pointerleave', () => {
 });
 
 window.addEventListener('keydown', e => {
+  if ($('thanks').open) return;
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
     e.preventDefault();
     undo();
@@ -1264,7 +1271,10 @@ function refreshName(open) {
     lookUp(smiles).then(
       hit => {
         if (namedSmiles !== smiles) return;
-        if (hit) showName(label ?? displayName(hit), { iupac: hit.iupac, cid: hit.cid });
+        if (hit) {
+          showName(label ?? displayName(hit), { iupac: hit.iupac, cid: hit.cid });
+          countNamed(smiles);
+        }
         else if (!label) showName('PubChem has no compound like this', { status: true, smiles });
       },
       () => {
@@ -1527,6 +1537,58 @@ window.addEventListener('beforeprint', () => {
 });
 $('print').addEventListener('click', printModel);
 
+// ---- Thank-you popup ----------------------------------------------------------
+// Every fifth molecule PubChem names for someone in this browser brings up a
+// popup asking for support, at most once a visit. "Never show this popup again"
+// is saved the moment it is ticked and checked again just before showing, so
+// once ticked the popup can't come back in this browser. If the browser's
+// storage is switched off, both still hold for the rest of the visit.
+const NAMED_KEY = 'molecules-named';
+const NEVER_KEY = 'molecules-never-ask';
+const ASK_EVERY = 5;
+const namedThisVisit = new Set();
+let namedCount = 0;
+let neverAsk = false;
+let askedThisVisit = false;
+
+function stored(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function store(key, value) {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    // Storage is switched off: the setting lasts for this visit only.
+  }
+}
+const neverAgain = () => neverAsk || stored(NEVER_KEY) === '1';
+
+function countNamed(smiles) {
+  if (structure() === notBuilt || namedThisVisit.has(smiles)) return;
+  namedThisVisit.add(smiles);
+  // Another tab may have counted too, so carry on from whichever is higher.
+  namedCount = Math.max(namedCount, Number(stored(NAMED_KEY)) || 0) + 1;
+  store(NAMED_KEY, String(namedCount));
+  if (namedCount % ASK_EVERY || askedThisVisit || neverAgain()) return;
+  askedThisVisit = true;
+  // A moment's pause, so the new name is seen first.
+  setTimeout(() => {
+    if (neverAgain() || $('thanks').open) return;
+    $('thanks-never').checked = false;
+    $('thanks').showModal();
+  }, 1500);
+}
+
+$('thanks-never').addEventListener('change', e => {
+  neverAsk = e.target.checked;
+  store(NEVER_KEY, neverAsk ? '1' : null);
+});
+
 // When the site was last deployed: the newest time any of its files changed
 // on the server. Each deploy is a fresh copy, so this needs no build step.
 async function showUpdated() {
@@ -1546,6 +1608,7 @@ try {
 } catch {
   // Nothing saved, or storage switched off: start with an empty table.
 }
+notBuilt = structure();
 setTool('add');
 rebuild();
 fitView();
