@@ -329,6 +329,24 @@ main { flex: 1; display: flex; min-height: 0; }
   .chip { min-height: 48px; }
 }
 
+/* The thank-you popup: plain, one small panel. */
+.thanks {
+  width: min(340px, calc(100vw - 32px));
+  padding: 18px 20px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+.thanks::backdrop { background: rgba(0, 0, 0, 0.35); }
+.thanks p { margin: 0 0 10px; }
+.thanks-title { font-size: 16px; font-weight: 650; }
+.thanks a { color: var(--accent); }
+.thanks-never { display: flex; align-items: center; gap: 8px; margin: 14px 0; color: var(--muted); cursor: pointer; }
+.thanks-never input { width: 16px; height: 16px; margin: 0; }
+.thanks-close { display: block; margin-left: auto; }
+
 /* Printing gives a picture of the model with its name and formula. */
 @media print {
   @page { margin: 15mm; }
@@ -339,7 +357,7 @@ main { flex: 1; display: flex; min-height: 0; }
     --accent: #2f5fd0;
   }
   html, body { height: auto; overflow: visible; background: #fff; color: var(--ink); }
-  .bar, .foot, .palette, .tools, .hint, .toast, .zoom, .help, #scene { display: none !important; }
+  .bar, .foot, .palette, .tools, .hint, .toast, .zoom, .help, .thanks, #scene { display: none !important; }
   main { display: block; }
   .stage { background: none; box-shadow: none !important; }
   .snapshot[src] { display: block; max-width: 100%; max-height: min(165mm, 60vh); margin: 0 auto 10mm; }

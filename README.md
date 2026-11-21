@@ -51,6 +51,10 @@ work, because browsers block ES modules on `file://`.)
   refresh. **Save** writes it to a `.json` file named after the molecule: in Chrome, Edge
   and on Chromebooks you choose where; other browsers put it in Downloads. **Load** opens
   a saved file.
+- **Support popup**: after every fifth molecule built here and named by PubChem (not
+  examples, opened files or a model brought back on refresh), a popup links to Buy Me a
+  Coffee, at most once a visit. "Never show this popup again" is saved in the browser as
+  soon as it's ticked.
 - **Print** prints a picture of the model, turned the way it is on screen, with its
   name and formula underneath. Ctrl/⌘ P and the browser's own Print do the same.
 - **Naming**: once every hole is filled, the panel names the molecule. The model is
