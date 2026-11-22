@@ -1591,7 +1591,7 @@ $('thanks-never').addEventListener('change', e => {
 // When the site was last deployed: the newest time any of its files changed
 // on the server. Each deploy is a fresh copy, so this needs no build step.
 async function showUpdated() {
-  const files = ['index.html', 'teachers.html', 'style.css', 'src/main.js', 'src/kit.js', 'src/naming.js', 'src/examples.js', 'src/layout.js'];
+  const files = ['index.html', 'teachers.html', 'terms.html', 'style.css', 'src/main.js', 'src/kit.js', 'src/naming.js', 'src/examples.js', 'src/layout.js'];
   const times = await Promise.all(files.map(file => fetch(file, { method: 'HEAD', cache: 'no-store' })
     .then(response => Date.parse(response.headers.get('Last-Modified')), () => NaN)));
   const latest = Math.max(...times.filter(Number.isFinite));
